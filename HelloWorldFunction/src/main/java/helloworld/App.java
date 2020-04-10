@@ -8,7 +8,7 @@ import helloworld.movieDetails.MovieDetailsAdder;
 import helloworld.movieDetails.MovieDetailsConstants;
 import helloworld.movieVisit.MovieVisitAdder;
 import helloworld.movieVisit.MovieVisitConstants;
-import helloworld.movieVisit.dao.MovieVisitFetcher;
+import helloworld.movieVisit.MovieVisitFetcherOrchestrator;
 import helloworld.theatre.TheatreAdder;
 import helloworld.theatre.TheatreConstants;
 import helloworld.theatre.TheatreFetcher;
@@ -26,7 +26,7 @@ public class App implements RequestHandler<Object, Object> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final TheatreFetcher theatreFetcher = new TheatreFetcher();
     private static final MovieVisitAdder movieVisitAdder = new MovieVisitAdder();
-    private static final MovieVisitFetcher movieVisitFetcher = new MovieVisitFetcher();
+    private static final MovieVisitFetcherOrchestrator MOVIE_VISIT_FETCHER_ORCHESTRATOR = new MovieVisitFetcherOrchestrator();
 
 
 
@@ -69,7 +69,7 @@ public class App implements RequestHandler<Object, Object> {
             context.getLogger().log("\n\n addMovieVisitRequest");
             movieVisitAdder.addMovieVisit(body);
         } else if(isGetMovieVisitRequest(jsonNode, context)) {
-            result = movieVisitFetcher.getMovieVisits(jsonNode);
+            result = MOVIE_VISIT_FETCHER_ORCHESTRATOR.getMovieVisits(jsonNode);
         }
         return result;
 

@@ -1,35 +1,33 @@
-package helloworld.movieVisit.dao;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omertron.omdbapi.model.OmdbVideoFull;
-import helloworld.db.Details;
-import helloworld.db.DetailsDbHelper;
-import helloworld.movieVisit.MovieVisitAdder;
+package helloworld.movieVisit;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MovieVisitFetcher {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omertron.omdbapi.model.OmdbVideoFull;
+import helloworld.db.Details;
+import helloworld.db.DetailsDbHelper;
+import helloworld.movieVisit.dao.MovieVisitMini;
+
+public class MovieVisitFetcherByDateFetcher implements MovieVisitFetcher{
     private static final DetailsDbHelper DETAILS_DB_HELPER = new DetailsDbHelper();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String  getMovieVisits(final JsonNode jsonNode) throws JsonProcessingException {
-        final JsonNode queryStringParameters = jsonNode.get("queryStringParameters");
-        final String userName = queryStringParameters.get("userName").asText();
-        final String startTime =  queryStringParameters.get("startTime").asText() ;
-        final String endTime = queryStringParameters.get("endTime").asText();
-        System.out.println("\n\n ###userName " + userName + " startTime: " + startTime + " endTime: " + endTime + "  " +queryStringParameters);
+
+    public List<MovieVisitMini> fetchMovieVisitByDate(final String userName, final String startTime, final String endTime) {
+
+        System.out.println("\n\n ###userName " + userName + " startTime: " + startTime + " endTime: " + endTime );
         final List<Details> visitedMovies = DETAILS_DB_HELPER.query(MovieVisitAdder.getHashKey(userName), "sortKey", startTime, endTime);
         if(visitedMovies.isEmpty()) {
             System.out.println("### Visited movies is empty");
-           return "";
+            return Collections.EMPTY_LIST;
         }
         System.out.println("\n\n\n### visited Movies " + visitedMovies);
         final Collection<Details> movieDetailsList = visitedMovies.stream().map(this::createMovie).
@@ -58,9 +56,15 @@ public class MovieVisitFetcher {
         visitedMoviesList.
                 sort(Comparator.comparing(MovieVisitMini::getWatchedDateInMillisecond).
                         reversed());
-        return objectMapper.writeValueAsString(visitedMoviesList);
+        return visitedMoviesList;
+
     }
 
+    public String  fetchMovieVisit(final String userName, final String startTime, final String endTime) throws JsonProcessingException {
+
+        return objectMapper.writeValueAsString(fetchMovieVisitByDate(userName, startTime, endTime));
+
+    }
 
 
     private Details createTheatreDetails(Details d) {
@@ -108,10 +112,3 @@ public class MovieVisitFetcher {
 
     }
 }
-
-
-/*
-queryStringParameters={endTime=1585763051480, startTime=0, userName=skven}
-queryStringParameters={userName=skven, startTime=0, endTime=1585763051480}
-
- */
