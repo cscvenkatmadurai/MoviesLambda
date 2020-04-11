@@ -16,7 +16,7 @@ import helloworld.db.Details;
 import helloworld.db.DetailsDbHelper;
 import helloworld.movieVisit.dao.MovieVisitMini;
 
-public class MovieVisitFetcherByDateFetcher implements MovieVisitFetcher{
+public class MovieVisitByDateFetcher implements MovieVisitFetcher{
     private static final DetailsDbHelper DETAILS_DB_HELPER = new DetailsDbHelper();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -103,7 +103,11 @@ public class MovieVisitFetcherByDateFetcher implements MovieVisitFetcher{
                     rating(visitedDetails.getMovieRating()).
                     theatreName(theatreDetails.getTheatreName()).
                     theatreLocation(theatreDetails.getTheatreLocation()).
+                    imdbId(movieDetail.getImdbID()).
+                    watchedLang(visitedDetails.getWatchedLang()).
+                    theatreId(theatreDetails.getSortKey()).
                     build();
+
 
         } catch (IOException e) {
             e.printStackTrace();

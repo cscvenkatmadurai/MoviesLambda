@@ -14,12 +14,14 @@ public class MovieVisitFetcherOrchestrator {
 
 
     private Map<String, MovieVisitFetcher> movieVisitFetcherMap;
-    private final MovieVisitFetcherByDateFetcher movieVisitByDateFetcher;
+    private final MovieVisitByDateFetcher movieVisitByDateFetcher;
 
     public MovieVisitFetcherOrchestrator() {
-        movieVisitByDateFetcher = new MovieVisitFetcherByDateFetcher();
+        movieVisitByDateFetcher = new MovieVisitByDateFetcher();
         movieVisitFetcherMap = new HashMap();
         movieVisitFetcherMap.put(BY_DATE, movieVisitByDateFetcher);
+        movieVisitFetcherMap.put(BY_LANG, new MovieVisitByLangFetcher());
+        movieVisitFetcherMap.put(BY_THEATRE, new MovieVisitByTheaterFetcher());
 
     }
 
@@ -30,7 +32,7 @@ public class MovieVisitFetcherOrchestrator {
         final String userName = queryStringParameters.get("userName").asText();
         final String startTime =  queryStringParameters.get("startTime").asText() ;
         final String endTime = queryStringParameters.get("endTime").asText();
-        final String by = queryStringParameters.has("by") ? queryStringParameters.get("by").asText() : BY_DATE;
+        final String by = queryStringParameters.has("by") ? queryStringParameters.get("by").asText() : BY_THEATRE;
         return movieVisitFetcherMap.containsKey(by) ? movieVisitFetcherMap.get(by).fetchMovieVisit(userName, startTime, endTime) : "";
 
     }
