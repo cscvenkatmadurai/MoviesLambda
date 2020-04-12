@@ -8,8 +8,7 @@ import java.util.function.Function;
 
 public class MovieVisitByLangFetcher implements MovieVisitFetcher {
 
-    final MovieVisitByDateFetcher movieVisitByDateFetcher = new MovieVisitByDateFetcher();
-    final ObjectMapper objectMapper = new ObjectMapper();
+
     final MovieVisitByIdFetcher movieVisitByIdFetcher = new MovieVisitByIdFetcher();
     private final static Function<MovieVisitMini, String> GET_LANG_ID = (movieVisitMini -> movieVisitMini.getWatchedLang().trim().toLowerCase());
 

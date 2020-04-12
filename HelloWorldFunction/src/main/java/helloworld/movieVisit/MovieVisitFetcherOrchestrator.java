@@ -22,6 +22,7 @@ public class MovieVisitFetcherOrchestrator {
         movieVisitFetcherMap.put(BY_DATE, movieVisitByDateFetcher);
         movieVisitFetcherMap.put(BY_LANG, new MovieVisitByLangFetcher());
         movieVisitFetcherMap.put(BY_THEATRE, new MovieVisitByTheaterFetcher());
+        movieVisitFetcherMap.put(BY_COUNT, new MovieVisitByCountFetcher());
 
     }
 
