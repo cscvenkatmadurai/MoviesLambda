@@ -7,13 +7,22 @@ import helloworld.movieDetails.MovieDetailsAdder;
 
 public class MovieVisitAdder {
     private final DetailsDbHelper detailsDbHelper = new DetailsDbHelper();
+    private final MovieDetailsAdder movieVisitAdder = new MovieDetailsAdder();
 
 
     public void addMovieVisit(final JsonNode jsonNode) {
+        final String imdbId = jsonNode.get("imdbId").asText();
+        try {
+            movieVisitAdder.addMovieDetail(imdbId);
+        }catch (final Exception e ) {
+            System.out.println("error in adding movie imdbId: " + imdbId);
+            e.printStackTrace();
+        }
+
         final Details movieVisitDetails = Details.builder().
                 hashkey(getHashKey(jsonNode.get("userName").asText())).
                 sortKey(jsonNode.get("showTime").asLong()).
-                imdbId(MovieDetailsAdder.removeImdbPrefix(jsonNode.get("imdbId").asText())).
+                imdbId(MovieDetailsAdder.removeImdbPrefix(imdbId)).
                 theatreId(jsonNode.get("theatreId").asLong()).
                 movieRating(jsonNode.get("rating").asDouble()).
                 watchedLang(jsonNode.get("langWatched").asText()).

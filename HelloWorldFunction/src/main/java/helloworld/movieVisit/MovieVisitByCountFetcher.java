@@ -9,13 +9,15 @@ import helloworld.movieVisit.dao.MovieVisitMini;
 import java.util.HashMap;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MovieVisitByCountFetcher implements MovieVisitFetcher {
 
     final MovieVisitByDateFetcher movieVisitByDateFetcher = new MovieVisitByDateFetcher();
     final ObjectMapper objectMapper = new ObjectMapper();
     @Override
-    public String fetchMovieVisit(String username, String startDate, String endDate) throws JsonProcessingException {
+    public String fetchMovieVisit(final String username, final String startDate, final String endDate) throws JsonProcessingException {
         final List<MovieVisitMini> movieVisitMiniList = movieVisitByDateFetcher.fetchMovieVisitByDate(username, startDate, endDate);
         movieVisitMiniList.sort(Comparator.comparing(MovieVisitMini::getImdbId));
         Map<String, TreeSet<MovieVisitMini>> imdbIdToMovieVisit = new HashMap<>();
@@ -75,14 +77,14 @@ public class MovieVisitByCountFetcher implements MovieVisitFetcher {
                     final MovieVisitById movieVisitById = new MovieVisitById();
                     movieVisitById.setId(Integer.toString(count));
                     movieVisitById.setNumberOfMovieOfMoviesWatched(movieVisits.size());
-                    movieVisitById.setNumberOfDistinctMoviesWatched(MovieVisitHelper.getNumberOfDistinctMovies(movieVisitMinis));
+                    movieVisitById.setNumberOfDistinctMoviesWatched(MovieVisitHelper.getNumberOfDistinctMovies(movieVisits));
                     movieVisitById.setMovieList(movieVisits);
                     movieVisitByCount.add(movieVisitById);
                 });
         return MovieVisitFetcherResponse.builder()
-                .movieVisitByIdList(movieVisitByCount).
-                numberOfMovieOfMoviesWatched(movieVisitMinis.size()).
-                numberOfMovieOfMoviesWatched(MovieVisitHelper.getNumberOfDistinctMovies(movieVisitMinis)).
+                .movieVisitByIdList(movieVisitByCount)
+                .numberOfMovieOfMoviesWatched(movieVisitMinis.size())
+                .numberOfDistinctMoviesWatched(MovieVisitHelper.getNumberOfDistinctMovies(movieVisitMinis)).
                 build();
     }
 }

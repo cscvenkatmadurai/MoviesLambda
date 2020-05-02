@@ -18,6 +18,11 @@ public class MovieDetailsAdder {
 
     public String addMovieDetails(final JsonNode jsonNode) {
         final String imdbId = jsonNode.get("imdbId").asText();
+        return addMovie(imdbId);
+
+    }
+
+    private String addMovie(String imdbId) {
         final OmdbVideoFull movieDetails = MOVIE_DB_CLIENT.getMovieDetails(imdbId);
         String moviesDetailsJsonAsString = "";
         try {
@@ -37,7 +42,10 @@ public class MovieDetailsAdder {
         DYNAMO_DB_HELPER.save(details);
 
         return moviesDetailsJsonAsString;
+    }
 
+    public void addMovieDetail(final String imdbId) {
+        addMovie(imdbId);
     }
 
     public static long removeImdbPrefix(final String imdbId) {
